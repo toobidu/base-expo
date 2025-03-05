@@ -1,0 +1,22 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "allowJs": true,
+    "resolveJsonModule": true, // Thêm dòng này để hỗ trợ import JSON
+    "esModuleInterop": true,  // Hỗ trợ import module tốt hơn
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",      
+    "**/*.jsx",    
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+, "app/components/BackButton.tsx"  ]
+}
