@@ -1,16 +1,29 @@
-import { Text, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import OnboardingScreen from "./screens/OnboardingScreen";
+import SplashScreen from "./screens/SplashScreen"; // Đảm bảo bạn đã tạo file này với code Splash Screen
+
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1
-      }}
-    >
-      {/* <Text style={{ color: "white" }}>Ngur hehe</Text> */}
-      <OnboardingScreen></OnboardingScreen>
-    </View>
-  );
+    const [isLoading, setIsLoading] = useState(true);
+
+    const onSplashFinish = () => {
+        setIsLoading(false);
+    };
+
+    return (
+        <View style={styles.container}>
+            {isLoading ? (
+                <SplashScreen onFinish={onSplashFinish} />
+            ) : (
+                <OnboardingScreen />
+            )}
+        </View>
+    );
 }
 
-
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#120E29", // Màu nền phù hợp với Splash Screen
+    },
+});

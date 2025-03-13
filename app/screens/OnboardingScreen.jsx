@@ -1,48 +1,39 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, {useState} from 'react';
+import {Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
+import Animated, {Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming,} from 'react-native-reanimated';
+import {Gesture, GestureDetector, GestureHandlerRootView} from 'react-native-gesture-handler';
+import {LinearGradient} from 'expo-linear-gradient';
 import Training from '../assets/icons/Training';
 import Work from '../assets/icons/Work';
 import Party from '../assets/icons/Party';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const gradientColors = [
-  ['#8B5CF6', '#EC4899', '#EF4444'], // purple-500 -> pink-500 -> red-500
-  ['#3B82F6', '#2DD4BF', '#22C55E'], // blue-500 -> teal-500 -> green-500
-  ['#EAB308', '#F97316', '#EF4444'], // yellow-500 -> orange-500 -> red-500
-  ['#6366F1', '#8B5CF6', '#EC4899']  // indigo-500 -> purple-500 -> pink-500
+  ['#121212', '#212121', '#535353'],
+  ['#121212', '#212121', '#535353'], // Đen -> Xám đậm -> Xám (màu tông tối)
+  ['#121212', '#212121', '#535353'],
+  ['#121212', '#212121', '#535353']
 ];
-
 const onboardingData = [
   {
-    title: 'Bứt phá giới hạn với nhịp điệu sôi động',
+    title: 'Bùng nổ cùng nhịp điệu',
+    subtitle: 'Khám phá âm nhạc mới mỗi ngày',
     IconComponent: Training,
   },
   {
     title: 'Tập trung tối đa với giai điệu yêu thích',
+    subtitle: 'Danh sách phát cho mọi khoảnh khắc trong ngày',
     IconComponent: Work,
   },
   {
     title: 'Quậy tưng bừng với những bản nhạc hot',
+    subtitle: 'Chia sẻ niềm vui âm nhạc cùng bạn bè',
     IconComponent: Party,
   },
 ];
 
-const OnboardingScreen = () => {
+const OnboardingScreen = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const translateXGradient = useSharedValue(0);
   const contentOpacity = useSharedValue(1);
@@ -77,89 +68,46 @@ const OnboardingScreen = () => {
     };
   });
 
-  // Animated style cho nội dung
-  const animatedContentStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: withTiming(translateXGradient.value, { duration: 600 }) },
-      ],
-      opacity: withTiming(1 - Math.abs(translateXGradient.value) / width, {
-        duration: 6000,
-      }),
-    };
-  });
-
   const panGesture = Gesture.Pan()
-  .onUpdate((event) => {
-    translateXGradient.value = event.translationX;
-  })
-  .onEnd((event) => {
-    const direction = event.translationX > 50 ? -1 : 1;
-    const shouldChangeIndex =
-      (direction === -1 && currentIndex < onboardingData.length - 1) ||
-      (direction === 1 && currentIndex > 0);
+      .onUpdate((event) => {
+        translateXGradient.value = event.translationX;
+      })
+      .onEnd((event) => {
+        const direction = event.translationX > 50 ? -1 : 1;
+        const shouldChangeIndex =
+            (direction === -1 && currentIndex < onboardingData.length - 1) ||
+            (direction === 1 && currentIndex > 0);
 
-    if (shouldChangeIndex) {
-      setCurrentIndex((prev) => prev - direction);
-    }
+        if (shouldChangeIndex) {
+          setCurrentIndex((prev) => prev - direction);
+        }
 
-    translateXGradient.value = withTiming(0, { duration: 300 });
-  });
-
-
-//   // Xử lý gesture kéo
-//   const panGesture = Gesture.Pan()
-//     .onUpdate((event) => {
-//       translateXGradient.value = event.translationX;
-//     })
-//     .onEnd((event) => {
-//       const shouldChangeIndex = 
-//         (event.translationX > 50 && currentIndex > 0) || 
-//         (event.translationX < -50 && currentIndex < onboardingData.length - 1);
-
-//       if (shouldChangeIndex) {
-//         // Ẩn nội dung trước khi chuyển
-//         contentOpacity.value = withTiming(0, { duration: 300 });
-        
-//         setTimeout(() => {
-//           if (event.translationX > 50) {
-//             setCurrentIndex(currentIndex - 1);
-//           } else {
-//             setCurrentIndex(currentIndex + 1);
-//           }
-          
-//           // Hiển thị lại nội dung
-//           contentOpacity.value = withTiming(1, { duration: 300 });
-//         }, 300);
-//       }
-
-//       // Reset vị trí gradient
-//       translateXGradient.value = withTiming(0, { duration: 300 });
-//     });
+        translateXGradient.value = withTiming(0, { duration: 300 });
+      });
 
   // Xử lý nhấn vào hai bên màn hình
   const handleRightPress = () => {
     if (currentIndex < onboardingData.length - 1) {
       // Ẩn nội dung trước khi chuyển
       contentOpacity.value = withTiming(0, { duration: 300 });
-      
+
       setTimeout(() => {
         setCurrentIndex(currentIndex + 1);
-        
+
         // Hiển thị lại nội dung
         contentOpacity.value = withTiming(1, { duration: 300 });
       }, 300);
     }
   };
-  
+
   const handleLeftPress = () => {
     if (currentIndex > 0) {
       // Ẩn nội dung trước khi chuyển
       contentOpacity.value = withTiming(0, { duration: 300 });
-      
+
       setTimeout(() => {
         setCurrentIndex(currentIndex - 1);
-        
+
         // Hiển thị lại nội dung
         contentOpacity.value = withTiming(1, { duration: 300 });
       }, 300);
@@ -168,18 +116,33 @@ const OnboardingScreen = () => {
 
   const renderDots = () => {
     return onboardingData.map((_, index) => {
+      // Nếu là màn cuối cùng, hiển thị nút Start thay cho dot
+      if (index === onboardingData.length - 1 && currentIndex === index) {
+        return (
+            <TouchableOpacity
+                key={index}
+                style={[styles.dot, styles.startButton]}
+                onPress={() => navigation.navigate('Welcome')}
+            >
+              <Text style={styles.startButtonText}>Start</Text>
+            </TouchableOpacity>
+        );
+      }
+
       const isActive = index === currentIndex;
       return (
-        <View
-          key={index}
-          style={[
-            styles.dot,
-            {
-              width: isActive ? 30 : 12,
-              backgroundColor: isActive ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)',
-            },
-          ]}
-        />
+          <View
+              key={index}
+              style={[
+                styles.dot,
+                {
+                  width: isActive ? 30 : 12,
+                  backgroundColor: isActive
+                      ? "#FFFFFF"
+                      : "rgba(255, 255, 255, 0.5)",
+                },
+              ]}
+          />
       );
     });
   };
@@ -187,76 +150,84 @@ const OnboardingScreen = () => {
   const IconComponent = onboardingData[currentIndex].IconComponent;
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={styles.container}>
-        {/* Gradient background với hiệu ứng chuyển */}
-        <GestureDetector gesture={panGesture}>
-          <Animated.View style={[styles.gradientContainer, animatedGradientStyle]}>
-            <LinearGradient
-              colors={gradientColors[currentIndex % gradientColors.length]}
-              style={styles.gradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-            />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          {/* Gradient background với hiệu ứng chuyển */}
+          <GestureDetector gesture={panGesture}>
+            <Animated.View
+                style={[styles.gradientContainer, animatedGradientStyle]}
+            >
+              <LinearGradient
+                  colors={gradientColors[currentIndex]}
+                  style={styles.gradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+              />
+            </Animated.View>
+          </GestureDetector>
+
+          {/* Nội dung cố định (icon, title, dots) */}
+          <Animated.View
+              style={[
+                styles.contentContainer,
+                { opacity: contentOpacity }
+              ]}
+          >
+            <View style={styles.fixedContent}>
+              <IconComponent style={styles.icon} />
+              <Text style={styles.title}>
+                {onboardingData[currentIndex].title}
+              </Text>
+            </View>
           </Animated.View>
-        </GestureDetector>
 
-        {/* Nội dung cố định (icon, title, dots) */}
-        <Animated.View 
-          style={[
-            styles.contentContainer, 
-            animatedContentStyle
-          ]}
-        >
-          <View style={styles.fixedContent}>
-            <IconComponent style={styles.icon} />
-            <Text style={styles.title}>{onboardingData[currentIndex].title}</Text>
-            <View style={styles.dotsContainer}>{renderDots()}</View>
+          {/* Dots luôn hiển thị */}
+          <View style={styles.dotsContainer}>
+            {renderDots()}
           </View>
-        </Animated.View>
 
-        {/* Khu vực nhấn hai bên */}
-        <TouchableOpacity
-          style={styles.leftTouchArea}
-          onPress={handleLeftPress}
-        />
-        <TouchableOpacity
-          style={styles.rightTouchArea}
-          onPress={handleRightPress}
-        />
-      </View>
-    </GestureHandlerRootView>
+          {/* Khu vực nhấn hai bên */}
+          <TouchableOpacity
+              style={styles.leftTouchArea}
+              onPress={handleLeftPress}
+          />
+          <TouchableOpacity
+              style={styles.rightTouchArea}
+              onPress={handleRightPress}
+          />
+        </View>
+      </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
   gradientContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   gradient: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
     zIndex: 10,
   },
   fixedContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {
     width: width * 0.8,
@@ -264,35 +235,52 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textAlign: "center",
     marginVertical: 20,
     paddingHorizontal: 20,
   },
   dotsContainer: {
-    flexDirection: 'row',
-    marginVertical: 45,
+    position: 'absolute',
+    bottom: 100,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    zIndex: 20,
   },
   dot: {
     height: 12,
     borderRadius: 6,
     marginHorizontal: 6,
   },
+  startButton: {
+    width: 100,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  startButtonText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
   leftTouchArea: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     top: 0,
     width: width * 0.5,
-    height: '100%',
+    height: "100%",
     zIndex: 20,
   },
   rightTouchArea: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
     top: 0,
     width: width * 0.5,
-    height: '100%',
+    height: "100%",
     zIndex: 20,
   },
 });
