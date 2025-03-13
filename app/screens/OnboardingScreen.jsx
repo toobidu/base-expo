@@ -1,20 +1,34 @@
-import React, {useState} from 'react';
-import {Dimensions, StyleSheet, Text, TouchableOpacity, View,} from 'react-native';
-import Animated, {Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming,} from 'react-native-reanimated';
-import {Gesture, GestureDetector, GestureHandlerRootView} from 'react-native-gesture-handler';
-import {LinearGradient} from 'expo-linear-gradient';
-import Training from '../assets/icons/Training';
-import Work from '../assets/icons/Work';
-import Party from '../assets/icons/Party';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  Animated as RNAnimated,
+} from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
+import Training from "../assets/icons/Training";
+import Work from "../assets/icons/Work";
+import Party from "../assets/icons/Party";
+
 
 const {width, height} = Dimensions.get('window');
 
-const gradientColors = [
-  ['#121212', '#212121', '#535353'],
-  ['#121212', '#212121', '#535353'], // Đen -> Xám đậm -> Xám (màu tông tối)
-  ['#121212', '#212121', '#535353'],
-  ['#121212', '#212121', '#535353']
-];
+// Khai báo một lần duy nhất
+const gradientColors = ['#121212', '#212121', '#535353'];
+
 const onboardingData = [
   {
     title: 'Bùng nổ cùng nhịp điệu',
@@ -35,8 +49,48 @@ const onboardingData = [
 
 const OnboardingScreen = ({ navigation }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showDots, setShowDots] = useState(true);
+  const [showLoading, setShowLoading] = useState(false);
+  const [showStartButton, setShowStartButton] = useState(false);
   const translateXGradient = useSharedValue(0);
   const contentOpacity = useSharedValue(1);
+
+  // State và animation cho loading bar
+  const [loadingProgress] = useState(new RNAnimated.Value(0));
+
+  useEffect(() => {
+    // Reset trạng thái khi không ở slide cuối
+    if (currentIndex < onboardingData.length - 1) {
+      setShowDots(true);
+      setShowLoading(false);
+      setShowStartButton(false);
+      loadingProgress.setValue(0);
+      return;
+    }
+
+    // Khi vào slide cuối, đặt timer để biến mất dots
+    const dotsTimer = setTimeout(() => {
+      setShowDots(false);
+
+      // Sau khi dots biến mất, hiện loading bar
+      setTimeout(() => {
+        setShowLoading(true);
+
+        // Animation loading bar
+        RNAnimated.timing(loadingProgress, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: false,
+        }).start(() => {
+          // Khi loading xong, hiển thị Start button
+          setShowStartButton(true);
+        });
+      }, 500); // Delay ngắn giữa việc biến mất dots và xuất hiện loading bar
+    }, 2000);
+
+    return () => clearTimeout(dotsTimer);
+  }, [currentIndex]);
+
 
   // Animated style cho gradient với hiệu ứng 3D và scale
   const animatedGradientStyle = useAnimatedStyle(() => {
@@ -101,7 +155,8 @@ const OnboardingScreen = ({ navigation }) => {
   };
 
   const handleLeftPress = () => {
-    if (currentIndex > 0) {
+    // Don't allow going back if on the last slide
+    if (currentIndex > 0 && currentIndex < onboardingData.length - 1) {
       // Ẩn nội dung trước khi chuyển
       contentOpacity.value = withTiming(0, { duration: 300 });
 
@@ -115,36 +170,82 @@ const OnboardingScreen = ({ navigation }) => {
   };
 
   const renderDots = () => {
-    return onboardingData.map((_, index) => {
-      // Nếu là màn cuối cùng, hiển thị nút Start thay cho dot
-      if (index === onboardingData.length - 1 && currentIndex === index) {
+    // Nếu không phải slide cuối, render dots bình thường
+    if (currentIndex < onboardingData.length - 1) {
+      return onboardingData.map((_, index) => {
+        const isActive = index === currentIndex;
         return (
-            <TouchableOpacity
+            <View
                 key={index}
-                style={[styles.dot, styles.startButton]}
-                onPress={() => navigation.navigate('Welcome')}
-            >
-              <Text style={styles.startButtonText}>Start</Text>
-            </TouchableOpacity>
+                style={[
+                  styles.dot,
+                  {
+                    width: isActive ? 30 : 12,
+                    backgroundColor: isActive
+                        ? "#FFFFFF"
+                        : "rgba(255, 255, 255, 0.5)",
+                  },
+                ]}
+            />
         );
-      }
+      });
+    }
 
-      const isActive = index === currentIndex;
-      return (
-          <View
-              key={index}
-              style={[
-                styles.dot,
-                {
-                  width: isActive ? 30 : 12,
-                  backgroundColor: isActive
-                      ? "#FFFFFF"
-                      : "rgba(255, 255, 255, 0.5)",
-                },
-              ]}
-          />
-      );
-    });
+    // Nếu là slide cuối
+    return (
+        <View style={styles.dotsWrapper}>
+          {/* Hiển thị dots */}
+          {showDots && (
+              <View style={styles.dotsRow}>
+                {onboardingData.map((_, index) => (
+                    <View
+                        key={index}
+                        style={[
+                          styles.dot,
+                          {
+                            width: index === currentIndex ? 30 : 12,
+                            backgroundColor:
+                                index === currentIndex
+                                    ? "#FFFFFF"
+                                    : "rgba(255, 255, 255, 0.5)",
+                          },
+                        ]}
+                    />
+                ))}
+              </View>
+          )}
+
+          {/* Hiển thị loading */}
+          {showLoading && !showStartButton && (
+              <View style={styles.loadingContainer}>
+                {/* Loading bar */}
+                <View style={styles.loadingBarBackground}>
+                  <RNAnimated.View
+                      style={[
+                        styles.loadingBarForeground,
+                        {
+                          width: loadingProgress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0%', '100%'],
+                          }),
+                        },
+                      ]}
+                  />
+                </View>
+              </View>
+          )}
+
+          {/* Nút Start */}
+          {showStartButton && (
+              <TouchableOpacity
+                  style={styles.startButton}
+                  onPress={() => navigation.navigate('Welcome')}
+              >
+                <Text style={styles.startButtonText}>Start</Text>
+              </TouchableOpacity>
+          )}
+        </View>
+    );
   };
 
   const IconComponent = onboardingData[currentIndex].IconComponent;
@@ -158,7 +259,7 @@ const OnboardingScreen = ({ navigation }) => {
                 style={[styles.gradientContainer, animatedGradientStyle]}
             >
               <LinearGradient
-                  colors={gradientColors[currentIndex]}
+                  colors={gradientColors}
                   style={styles.gradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
@@ -201,6 +302,7 @@ const OnboardingScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  // Các style khác giữ nguyên không thay đổi
   container: {
     flex: 1,
     backgroundColor: "#000",
@@ -250,10 +352,34 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     zIndex: 20,
   },
+  dotsWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   dot: {
     height: 12,
     borderRadius: 6,
     marginHorizontal: 6,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+  },
+  loadingBarBackground: {
+    width: 200,
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  loadingBarForeground: {
+    height: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 3,
   },
   startButton: {
     width: 100,
