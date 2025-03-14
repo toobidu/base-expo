@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions, Text } from 'react-native';
-import Music from '../assets/icons/Music';
+import Music from '../assets/images/logo/Music';
 
 const { width, height } = Dimensions.get('window');
 

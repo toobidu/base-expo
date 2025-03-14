@@ -15,7 +15,7 @@ export default function Index() {
             {isLoading ? (
                 <SplashScreen onFinish={onSplashFinish} />
             ) : (
-                <OnboardingScreen />
+                <OnboardingScreen navigation={undefined} />
             )}
         </View>
     );
@@ -24,6 +24,6 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#120E29", // Màu nền phù hợp với Splash Screen
+        backgroundColor: "#120E29",
     },
 });
