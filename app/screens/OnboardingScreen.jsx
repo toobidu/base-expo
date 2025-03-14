@@ -10,7 +10,7 @@ import Party from "../assets/images/onboardings/Party";
 import {useOnboardingState} from "../hooks/onboarding/useOnboardingState"
 import {useAnimationEffects} from "../hooks/onboarding/useAnimationEffects";
 import {useGestureHandling} from "../hooks/onboarding/useGetsureHandling"
-import OnboardingStyle from "@/app/styles/OnboardingStyle";
+import OnboardingStyle from "../styles/OnboardingStyle";
 
 const {width} = Dimensions.get('window');
 
@@ -87,7 +87,7 @@ const OnboardingScreen = ({navigation}) => {
       {/* Nút Start */}
       {showStartButton && (<TouchableOpacity
           style={OnboardingStyle.startButton}
-          onPress={() => navigation.navigate('Welcome')}
+          onPress={() => navigation.navigate('WelcomeScreen')}
       >
         <Text style={OnboardingStyle.startButtonText}>Start</Text>
       </TouchableOpacity>)}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, Dimensions, Text } from 'react-native';
 import Music from '../assets/images/logo/Music';
+import SplashStyle from "../styles/SplashStyle";
 
 const { width, height } = Dimensions.get('window');
 
@@ -40,11 +41,11 @@ const SplashScreen = ({ onFinish }) => {
     });
 
     return (
-        <View style={styles.container}>
+        <View style={SplashStyle.container}>
             {/* Hiệu ứng hình tròn nền */}
             <Animated.View
                 style={[
-                    styles.backgroundCircle,
+                    SplashStyle.backgroundCircle,
                     {
                         opacity: animValue.interpolate({
                             inputRange: [0, 1],
@@ -59,7 +60,7 @@ const SplashScreen = ({ onFinish }) => {
          để đảm bảo chúng xuất hiện và biến mất cùng lúc */}
             <Animated.View
                 style={[
-                    styles.contentContainer,
+                    SplashStyle.contentContainer,
                     {
                         opacity,
                         transform: [
@@ -70,51 +71,18 @@ const SplashScreen = ({ onFinish }) => {
                 ]}
             >
                 {/* Logo */}
-                <View style={styles.logoContainer}>
+                <View style={SplashStyle.logoContainer}>
                     <Music width={150} height={150} />
                 </View>
 
                 {/* Text ngay bên dưới logo */}
-                <View style={styles.textContainer}>
-                    <Text style={styles.appName}>SoundClone©</Text>
+                <View style={SplashStyle.textContainer}>
+                    <Text style={SplashStyle.appName}>SoundClone©</Text>
                 </View>
             </Animated.View>
         </View>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#121212',
-    },
-    backgroundCircle: {
-        position: 'absolute',
-        width: width * 1.5,
-        height: width * 1.5,
-        borderRadius: width * 0.75,
-        backgroundColor: '#121212',
-    },
-    contentContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    logoContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    textContainer: {
-        alignItems: 'center',
-        marginTop: 30,
-    },
-    appName: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-        marginBottom: 8,
-    },
-});
 
 export default SplashScreen;

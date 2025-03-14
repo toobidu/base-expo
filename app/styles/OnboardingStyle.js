@@ -1,6 +1,7 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import Dimensions from "@/app/constants/Dimensions";
 
-const { width, height } = Dimensions.get('window');
+const {screenWidth: width, screenHeight: height} = Dimensions;
 
 const OnboardingStyle = StyleSheet.create({
     container: {
