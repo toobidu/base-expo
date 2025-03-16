@@ -20,7 +20,7 @@ const WelcomeStyle = StyleSheet.create({
         justifyContent: 'center',
         width: 120,
         height: 120,
-        marginBottom: 32,
+        marginBottom: 32, //magin
     },
     textContainer: {
         alignItems: 'center',
