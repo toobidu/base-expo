@@ -1,29 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
-import OnboardingScreen from "./screens/OnboardingScreen";
-import SplashScreen from "./screens/SplashScreen"; // Đảm bảo bạn đã tạo file này với code Splash Screen
+// import React, {useState} from "react";
+// import {StyleSheet, View} from "react-native";
+// import SplashScreen from "./screens/SplashScreen";
+// import {Redirect} from "expo-router";
+//
+// export default function Index() {
+//     const [isLoading, setIsLoading] = useState(true);
+//
+//     const onSplashFinish = () => {
+//         setIsLoading(false);
+//     };
+//
+//     if (isLoading) {
+//         return (
+//             <View style={styles.container}>
+//                 <SplashScreen onFinish={onSplashFinish}/>
+//             </View>
+//         );
+//     }
+//
+//     return <Redirect href="/screens/OnboardingScreen"/>;
+// }
+//
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         backgroundColor: "#120E29",
+//     },
+// });
+
+import React from "react";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-    const [isLoading, setIsLoading] = useState(true);
-
-    const onSplashFinish = () => {
-        setIsLoading(false);
-    };
-
-    return (
-        <View style={styles.container}>
-            {isLoading ? (
-                <SplashScreen onFinish={onSplashFinish} />
-            ) : (
-                <OnboardingScreen navigation={undefined} />
-            )}
-        </View>
-    );
+    console.log("Redirecting to splash screen");
+    return <Redirect href={"/screens/SplashScreen"} />;
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#120E29",
-    },
-});

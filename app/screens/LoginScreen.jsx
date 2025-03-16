@@ -1,4 +1,7 @@
 import React from 'react';
+import Dimensions from "@/constants/Dimensions";
+
+const {screenWidth, screenHeight} = Dimensions;
 
 const LoginScreen = ({ goBack }) => {
     return (

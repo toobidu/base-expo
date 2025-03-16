@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import Dimensions from "@/app/constants/Dimensions";
+import Dimensions from "@/constants/Dimensions";
 
 const {screenWidth: width, screenHeight: height} = Dimensions;
 
@@ -27,12 +27,10 @@ const SplashStyle = StyleSheet.create({
         justifyContent: 'center',
     }, textContainer: {
         alignItems: 'center',
-        marginTop: 30,
     }, appName: {
         fontSize: 32,
         fontWeight: 'bold',
         color: '#FFFFFF',
-        marginBottom: 8,
     },
 });
 

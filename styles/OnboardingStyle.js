@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
-import Dimensions from "@/app/constants/Dimensions";
+import Dimensions from "@/constants/Dimensions";
 
-const {screenWidth: width, screenHeight: height} = Dimensions;
+const { screenWidth, screenHeight } = Dimensions;
 
 const OnboardingStyle = StyleSheet.create({
     container: {
@@ -33,8 +33,8 @@ const OnboardingStyle = StyleSheet.create({
         alignItems: "center",
     },
     icon: {
-        width: width * 0.8,
-        height: height * 0.3,
+        width: screenWidth * 0.8,
+        height: screenHeight * 0.3,
     },
     title: {
         fontSize: 24,
@@ -79,43 +79,71 @@ const OnboardingStyle = StyleSheet.create({
         alignItems: 'center',
     },
     loadingBarBackground: {
-        width: 200,
-        height: 6,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        borderRadius: 3,
+        width: 240,
+        height: 8,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        borderRadius: 7,
         overflow: 'hidden',
+        marginBottom: 8,
     },
     loadingBarForeground: {
         height: '100%',
-        backgroundColor: '#FFFFFF',
-        borderRadius: 3,
+        borderRadius: 4,
+        overflow: 'hidden',
     },
-    startButton: {
-        width: 100,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: '#FFFFFF',
-        justifyContent: 'center',
+    loadingBarGradient: {
+        height: '100%',
+        width: '100%',
+    },
+    loadingBarContainer: {
+        width: 240,
         alignItems: 'center',
     },
+
+    shineEffect: {
+        position: 'absolute',
+        width: 20,
+        height: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        borderRadius: 4,
+        transform: [{ skewX: '-20deg' }],
+    },
+    startButton: {
+        width: 160,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#1DB954', // Spotify's signature green
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 5,
+        marginVertical: 16,
+        zIndex: 30,
+    },
     startButtonText: {
-        color: '#000',
-        fontWeight: 'bold',
+        color: '#FFFFFF',
+        fontWeight: '700',
+        fontSize: 16,
+        letterSpacing: 1,
+        textTransform: 'uppercase',
     },
     leftTouchArea: {
         position: "absolute",
         left: 0,
         top: 0,
-        width: width * 0.5,
-        height: "100%",
+        width: screenWidth * 0.3, // Narrower width
+        height: screenHeight, // Full screen height
         zIndex: 20,
     },
     rightTouchArea: {
         position: "absolute",
         right: 0,
         top: 0,
-        width: width * 0.5,
-        height: "100%",
+        width: screenWidth * 0.3, // Narrower width
+        height: screenHeight, // Full screen height
         zIndex: 20,
     },
 });
