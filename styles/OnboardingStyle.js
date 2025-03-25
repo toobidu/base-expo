@@ -4,9 +4,12 @@ import Dimensions from "@/constants/Dimensions";
 const { screenWidth, screenHeight } = Dimensions;
 
 const OnboardingStyle = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#121212', // Màu nền giống với gradientColors[0]
+    },
     container: {
         flex: 1,
-        backgroundColor: "#000",
     },
     gradientContainer: {
         position: "absolute",

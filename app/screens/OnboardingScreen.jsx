@@ -1,5 +1,5 @@
 import React from "react";
-import {Animated as RNAnimated, Text, TouchableOpacity, View,} from "react-native";
+import {Animated as RNAnimated, Text, TouchableOpacity, View, SafeAreaView} from "react-native";
 import Animated, {useAnimatedStyle} from "react-native-reanimated";
 import {GestureDetector, GestureHandlerRootView,} from "react-native-gesture-handler";
 import {LinearGradient} from "expo-linear-gradient";
@@ -30,7 +30,7 @@ const onboardingData = [
   },
   {
     title: 'Lan tỏa niềm vui âm nhạc',
-    subtitle: 'Quẩy hết mình cùng những bản nhạc hot',
+    subtitle: 'Đắm mình trong những bản nhạc sôi động',
     IconComponent: Party,
   },
 ];
@@ -59,13 +59,11 @@ router.push("/screens/WelcomeScreen");  };
   }));
 
   const glowStyle = useAnimatedStyle(() => ({
-    style: {
       shadowOpacity: glowAnim.value * 0.8,
       shadowColor: '#FFFFFF',
       shadowOffset: { width: 0, height: 0 },
       shadowRadius: 6,
       elevation: glowAnim.value * 4,
-    }
   }));
 
   const shineStyle = useAnimatedStyle(() => ({
@@ -155,15 +153,16 @@ router.push("/screens/WelcomeScreen");  };
   const IconComponent = onboardingData[currentIndex].IconComponent;
 
   return (
-      <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={OnboardingStyle.safeArea}>
         <View style={OnboardingStyle.container}>
           <GestureDetector gesture={panGesture}>
             <Animated.View style={[OnboardingStyle.gradientContainer, animatedGradientStyle]}>
               <LinearGradient
-                  colors={gradientColors}
-                  style={OnboardingStyle.gradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
+                colors={gradientColors}
+                style={OnboardingStyle.gradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
               />
             </Animated.View>
           </GestureDetector>
@@ -185,15 +184,16 @@ router.push("/screens/WelcomeScreen");  };
           </View>
 
           <TouchableOpacity
-              style={OnboardingStyle.leftTouchArea}
-              onPress={handleLeftPress}
+            style={OnboardingStyle.leftTouchArea}
+            onPress={handleLeftPress}
           />
           <TouchableOpacity
-              style={OnboardingStyle.rightTouchArea}
-              onPress={handleRightPress}
+            style={OnboardingStyle.rightTouchArea}
+            onPress={handleRightPress}
           />
         </View>
-      </GestureHandlerRootView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 

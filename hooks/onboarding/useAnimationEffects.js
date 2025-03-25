@@ -10,6 +10,13 @@ export const useAnimationEffects = () => {
     // Animated style cho gradient với hiệu ứng 3D và scale
     const animatedGradientStyle = useAnimatedStyle(() => {
         const absTranslation = Math.abs(translateXGradient.value);
+
+        // Đảm bảo scale không bao giờ âm hoặc quá nhỏ
+        const scale = Math.max(0.1, 1 - absTranslation / (width * 1.5));
+
+        // Đảm bảo opacity luôn nằm trong khoảng từ 0 đến 1
+        const opacityValue = Math.min(Math.max(0, 1 - absTranslation / width), 1);
+
         return {
             transform: [
                 { perspective: 1000 },
@@ -26,12 +33,12 @@ export const useAnimationEffects = () => {
                     }),
                 },
                 {
-                    scale: withTiming(1 - absTranslation / (width * 1.5), {
+                    scale: withTiming(scale, {
                         duration: 600,
                     }),
                 },
             ],
-            opacity: withTiming(1 - absTranslation / width, {
+            opacity: withTiming(opacityValue, {
                 duration: 600,
             }),
         };

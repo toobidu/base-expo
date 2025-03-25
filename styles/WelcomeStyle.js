@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
-import Dimensions from "@/constants/Dimensions";
-
-const { screenWidth, screenHeight } = Dimensions;
+import { COLORS, SPACING, SIZES, SHADOWS, TYPOGRAPHY } from '@/constants/theme';
 
 const WelcomeStyle = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: COLORS.background,
+    },
     container: {
         flex: 1,
-        backgroundColor: '#000000',
-        padding: 24,
+        padding: SPACING.lg,
         justifyContent: 'space-between',
     },
     content: {
@@ -18,53 +19,53 @@ const WelcomeStyle = StyleSheet.create({
     logoContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: 120,
-        height: 120,
-        marginBottom: 32, //magin
+        width: SIZES.logo.width,
+        height: SIZES.logo.height,
+        marginBottom: SPACING.xl,
     },
     textContainer: {
         alignItems: 'center',
     },
     title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#FFFFFF',
+        ...TYPOGRAPHY.title,
+        color: COLORS.text.primary,
         textAlign: 'center',
-        marginBottom: 12,
+        marginBottom: SPACING.sm,
     },
     subtitle: {
-        fontSize: 20,
-        color: '#FFFFFF',
+        ...TYPOGRAPHY.subtitle,
+        color: COLORS.text.secondary,
         textAlign: 'center',
     },
     buttonContainer: {
         width: '100%',
-        marginBottom: 32,
+        marginBottom: SPACING.xl,
     },
     registerButton: {
-        backgroundColor: '#22C55E',
-        paddingVertical: 16,
-        borderRadius: 999,
-        marginBottom: 16,
-        shadowColor: '#22C55E',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 5,
+        backgroundColor: COLORS.button.primary,
+        height: SIZES.button.height,
+        borderRadius: SIZES.button.radius,
+        marginBottom: SPACING.md,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...SHADOWS.primary,
     },
     loginButton: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        paddingVertical: 16,
-        borderRadius: 999,
+        backgroundColor: COLORS.button.secondary,
+        height: SIZES.button.height,
+        borderRadius: SIZES.button.radius,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        borderColor: COLORS.border,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        textAlign: 'center',
-        fontWeight: '600',
-        letterSpacing: 0.5,
+        ...TYPOGRAPHY.button,
+        color: COLORS.button.text.primary,
+    },
+    loginButtonText: {
+        ...TYPOGRAPHY.button,
+        color: COLORS.button.text.secondary,
     },
 });
 export default WelcomeStyle;

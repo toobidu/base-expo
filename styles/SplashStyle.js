@@ -4,12 +4,14 @@ import Dimensions from "@/constants/Dimensions";
 const {screenWidth: width, screenHeight: height} = Dimensions;
 
 const SplashStyle = StyleSheet.create({
-
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#121212',
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#121212',
     },
     backgroundCircle: {
         position: 'absolute',
@@ -25,9 +27,11 @@ const SplashStyle = StyleSheet.create({
     logoContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-    }, textContainer: {
+    }, 
+    textContainer: {
         alignItems: 'center',
-    }, appName: {
+    }, 
+    appName: {
         fontSize: 32,
         fontWeight: 'bold',
         color: '#FFFFFF',
