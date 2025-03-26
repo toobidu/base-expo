@@ -59,13 +59,10 @@ const WelcomeStyle = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    buttonText: {
-        ...TYPOGRAPHY.button,
-        color: COLORS.button.text.primary,
-    },
     loginButtonText: {
-        ...TYPOGRAPHY.button,
-        color: COLORS.button.text.secondary,
+        color: '#ffffff',
+        fontSize: 20,
+        fontWeight: "bold"
     },
 });
 export default WelcomeStyle;
