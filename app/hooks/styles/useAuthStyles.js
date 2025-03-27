@@ -1,8 +1,6 @@
 export const useAuthStyles = (screen) => {
     if (screen === 'login') {
         return StyleSheet.create({
-            // ... các styles cũ giữ nguyên
-
             dividerContainer: {
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -40,5 +38,4 @@ export const useAuthStyles = (screen) => {
             },
         });
     }
-    // ... các screen khác giữ nguyên
 };

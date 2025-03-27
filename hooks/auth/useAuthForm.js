@@ -78,7 +78,7 @@ export const useAuthForm = (type = 'login') => {
 
             // if (response.data.success) {
             //     await AsyncStorage.setItem('userToken', response.data.token);
-            //     router.replace('/screens/MainScreen');
+            //     router.push('/screens/MainScreen');
             // }
         } catch (err) {
             setError(err.response?.data?.message || 'Đã có lỗi xảy ra');
