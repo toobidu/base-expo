@@ -5,278 +5,479 @@ import {
     FlatList,
     Image,
     TouchableOpacity,
-    ActivityIndicator,
-    Alert,
+    TextInput,
     SafeAreaView,
-    ScrollView,
-    TextInput
+    Animated,
 } from 'react-native';
-import axios from 'axios';
-import OptionalStyle from "@/styles/OptionalStyle";
-import {router} from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
+import { router } from "expo-router";
+import OptionalStyle from "@/styles/OptionalStyle";
+import Entypo from '@expo/vector-icons/Entypo';
 
-const API_URL = '......'; //todo: Thay bằng end-point
+// Mock data for artists
+const mockArtists =
+    [
+        {
+            "id": 1,
+            "name": "Taylor Swift",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_4.png"
+        },
+        {
+            "id": 2,
+            "name": "The Weeknd",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/The_Weeknd_Portrait_by_Brian_Ziff.jpg"
+        },
+        {
+            "id": 3,
+            "name": "Billie Eilish",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/92/BillieEilishO2160622_%2819_of_45%29_%2852153214339%29_%28cropped_3%29.jpg"
+        },
+        {
+            "id": 4,
+            "name": "Drake",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/2/28/Drake_July_2016.jpg"
+        },
+        {
+            "id": 5,
+            "name": "Ariana Grande",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Ariana_Grande_Grammys_Red_Carpet_2020.png"
+        },
+        {
+            "id": 6,
+            "name": "Ed Sheeran",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Ed_Sheeran-6886_%28cropped%29.jpg"
+        },
+        {
+            "id": 7,
+            "name": "Kendrick Lamar",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/32/Kendrick_Lamar_2016.jpg"
+        },
+        {
+            "id": 8,
+            "name": "Dua Lipa",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Dua_Lipa_2020.png"
+        },
+        {
+            "id": 9,
+            "name": "Post Malone",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/06/Post_Malone_at_the_2019_American_Music_Awards.png"
+        },
+        {
+            "id": 10,
+            "name": "Beyoncé",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/17/Beyonc%C3%A9_at_The_Lion_King_European_Premiere_2019.png"
+        },
+        {
+            "id": 11,
+            "name": "Travis Scott",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/14/Travis_Scott_-_Openair_Frauenfeld_2019_01_%28cropped%29.jpg"
+        },
+        {
+            "id": 12,
+            "name": "Shawn Mendes",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/01/Shawn_Mendes_-_Wonder_%28cropped%29.png"
+        },
+        {
+            "id": 13,
+            "name": "Harry Styles",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/85/Harry_Styles_Wembley_June_2023_-_230618_%28cropped%29.jpg"
+        },
+        {
+            "id": 14,
+            "name": "Rihanna",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Rihanna_at_the_Met_Gala_2017_%28cropped%29.jpg"
+        },
+        {
+            "id": 15,
+            "name": "J. Cole",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/J._Cole_at_Radio_1%27s_Big_Weekend_2015_%28cropped%29.jpg"
+        },
+        {
+            "id": 16,
+            "name": "Doja Cat",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Doja_Cat_2019.png"
+        },
+        {
+            "id": 17,
+            "name": "Bruno Mars",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Bruno_Mars_24K_Magic_World_Tour_Los_Angeles_3_%28cropped%29.jpg"
+        },
+        {
+            "id": 18,
+            "name": "SZA",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/SZA_-_Ctrl_%28cropped%29.png"
+        },
+        {
+            "id": 19,
+            "name": "Olivia Rodrigo",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Olivia_Rodrigo_11-19-2021_%28cropped%29.jpg"
+        },
+        {
+            "id": 20,
+            "name": "Imagine Dragons",
+            "genre": "Rock",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Imagine_Dragons_2017_%28cropped%29.jpg"
+        },
+        {
+            "id": 21,
+            "name": "Coldplay",
+            "genre": "Rock",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Coldplay_-_Global_Citizen_Festival_Hamburg_07_%28cropped%29.jpg"
+        },
+        {
+            "id": 22,
+            "name": "Sam Smith",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Sam_Smith_2017_%28cropped%29.png"
+        },
+        {
+            "id": 23,
+            "name": "Lizzo",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Lizzo_2018_%28cropped%29.jpg"
+        },
+        {
+            "id": 24,
+            "name": "Halsey",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Halsey_2021_%28cropped%29.jpg"
+        },
+        {
+            "id": 25,
+            "name": "Lil Nas X",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Lil_Nas_X_2021_%28cropped%29.jpg"
+        },
+        {
+            "id": 26,
+            "name": "Lady Gaga",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Lady_Gaga_2017_%28cropped%29.jpg"
+        },
+        {
+            "id": 27,
+            "name": "Kanye West",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Kanye_West_2019_%28cropped%29.jpg"
+        },
+        {
+            "id": 28,
+            "name": "Adele",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Adele_2016_%28cropped%29.jpg"
+        },
+        {
+            "id": 29,
+            "name": "Eminem",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Eminem_2018_%28cropped%29.jpg"
+        },
+        {
+            "id": 30,
+            "name": "Miley Cyrus",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Miley_Cyrus_2021_%28cropped%29.jpg"
+        },
+        {
+            "id": 31,
+            "name": "Chris Brown",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Chris_Brown_2015_%28cropped%29.jpg"
+        },
+        {
+            "id": 32,
+            "name": "Katy Perry",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Katy_Perry_2019_%28cropped%29.jpg"
+        },
+        {
+            "id": 33,
+            "name": "Nicki Minaj",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Nicki_Minaj_2018_%28cropped%29.jpg"
+        },
+        {
+            "id": 34,
+            "name": "Justin Bieber",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Justin_Bieber_2020_%28cropped%29.jpg"
+        },
+        {
+            "id": 35,
+            "name": "Alicia Keys",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Alicia_Keys_2019_%28cropped%29.jpg"
+        },
+        {
+            "id": 36,
+            "name": "Cardi B",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Cardi_B_2018_%28cropped%29.jpg"
+        },
+        {
+            "id": 37,
+            "name": "Selena Gomez",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Selena_Gomez_2020_%28cropped%29.jpg"
+        },
+        {
+            "id": 38,
+            "name": "Frank Ocean",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Frank_Ocean_2016_%28cropped%29.jpg"
+        },
+        {
+            "id": 39,
+            "name": "Demi Lovato",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Demi_Lovato_2017_%28cropped%29.jpg"
+        },
+        {
+            "id": 40,
+            "name": "Tyler, The Creator",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Tyler%2C_The_Creator_2019_%28cropped%29.jpg"
+        },
+        {
+            "id": 41,
+            "name": "Camila Cabello",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Camila_Cabello_2019_%28cropped%29.jpg"
+        },
+        {
+            "id": 42,
+            "name": "Usher",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Usher_2016_%28cropped%29.jpg"
+        },
+        {
+            "id": 43,
+            "name": "Megan Thee Stallion",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Megan_Thee_Stallion_2021_%28cropped%29.jpg"
+        },
+        {
+            "id": 44,
+            "name": "The Chainsmokers",
+            "genre": "EDM",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/The_Chainsmokers_2016_%28cropped%29.jpg"
+        },
+        {
+            "id": 45,
+            "name": "Zayn Malik",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Zayn_Malik_2015_%28cropped%29.jpg"
+        },
+        {
+            "id": 46,
+            "name": "Tinashe",
+            "genre": "R&B",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Tinashe_2015_%28cropped%29.jpg"
+        },
+        {
+            "id": 47,
+            "name": "Calvin Harris",
+            "genre": "EDM",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Calvin_Harris_2017_%28cropped%29.jpg"
+        },
+        {
+            "id": 48,
+            "name": "Sabrina Carpenter",
+            "genre": "Pop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Sabrina_Carpenter_2021_%28cropped%29.jpg"
+        },
+        {
+            "id": 49,
+            "name": "21 Savage",
+            "genre": "Hip-hop",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/21_Savage_2018_%28cropped%29.jpg"
+        },
+        {
+            "id": 50,
+            "name": "Linkin Park",
+            "genre": "Rock",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Linkin_Park_2017_%28cropped%29.jpg"
+        }
+    ];
 
 const Optional = () => {
-    // State
-    const [artists, setArtists] = useState([]); // Danh sách nghệ sĩ ban đầu
-    const [selectedArtist, setSelectedArtist] = useState(null); // Nghệ sĩ chính được chọn
-    const [relatedArtists, setRelatedArtists] = useState([]); // Nghệ sĩ liên quan
-    const [selectedIds, setSelectedIds] = useState([]); // ID các nghệ sĩ đã chọn
-    const [loading, setLoading] = useState(false); // Trạng thái loading
-    const [error, setError] = useState(''); // Thông báo lỗi
-    const [showRelated, setShowRelated] = useState(false); // Hiển thị danh sách liên quan?
+    const [artists, setArtists] = useState([]);
+    const [selectedIds, setSelectedIds] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
-
-    const filteredArtists = artists.filter(artist => 
-        artist.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const [visibleItems, setVisibleItems] = useState(20); // Số item hiển thị ban đầu
+    const ITEMS_PER_LOAD = 5; // Số item load thêm mỗi lần
+    const MAX_SELECTIONS = 3;
 
     const styles = OptionalStyle;
 
-    // Hàm lấy danh sách nghệ sĩ ban đầu
+    const filteredArtists = artists.filter(artist =>
+        artist.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    // Chỉ hiển thị số lượng item theo visibleItems
+    const displayedArtists = filteredArtists.slice(0, visibleItems);
+
+    const handleLoadMore = () => {
+        setVisibleItems(prev => Math.min(prev + ITEMS_PER_LOAD, filteredArtists.length));
+    };
+
     const fetchArtists = async () => {
-        setLoading(true);
         try {
-            const response = await axios.get(`${API_URL}/artists`); // todo: Thay bằng end-point
-            setArtists(response.data);
+            setTimeout(() => {
+                setArtists(mockArtists);
+            }, 1000);
         } catch (err) {
-            setError('Không thể tải danh sách nghệ sĩ!');
             console.error(err);
-        } finally {
-            setLoading(false);
         }
     };
 
-    // Hàm lấy nghệ sĩ cùng thể loại
-    const fetchRelatedArtists = async (genre) => {
-        try {
-            const response = await axios.get(
-                `${API_URL}/artists/related`, //todo: Thay bằng end-point
-                { params: { genre, excludeId: selectedArtist?.id } } // Thêm excludeId
-            );
-            setRelatedArtists(response.data);
-        } catch (err) {
-            setError('Không thể tải nghệ sĩ liên quan!');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Xử lý khi chọn nghệ sĩ
     const handleSelectArtist = (artist) => {
-        // Giới hạn 3 nghệ sĩ
-        if (selectedIds.length >= 3) {
-            Alert.alert('Thông báo', 'Bạn chỉ được chọn tối đa 3 nghệ sĩ!');
-            return;
-        }
-
-        // Cập nhật state
-        setSelectedArtist(artist);
-        setSelectedIds([...selectedIds, artist.id]);
-        setShowRelated(true);
-
-        // Lấy nghệ sĩ cùng thể loại
-        fetchRelatedArtists(artist.genre);
-    };
-
-    // Xử lý khi hủy chọn
-    const handleUnselect = () => {
-        setSelectedArtist(null);
-        setSelectedIds([]);
-        setShowRelated(false);
-    };
-
-    // Xử lý nút "Xong"
-    const handleDone = async () => {
-        if (selectedIds.length < 1) {
-            Alert.alert('Thông báo', 'Vui lòng chọn ít nhất 1 nghệ sĩ!');
-            return;
-        }
-
-        try {
-            const response = await axios.post(
-                `${API_URL}/selected-artists`, //todo: Thay bằng end-point
-                { selectedIds },
-                { headers: { 'Content-Type': 'application/json' } }
-            );
-            if (response.data.success) {
-                Alert.alert('Thành công', 'Đã lưu lựa chọn của bạn!');
-                // Reset state
-                setSelectedIds([]);
-                setSelectedArtist(null);
-                setShowRelated(false);
-                router.push('screens/MainScreen');
-            } else {
-                Alert.alert('Lỗi', 'Lưu dữ liệu thất bại!');
-            }
-        } catch (err) {
-            console.error(err);
-            Alert.alert('Lỗi', 'Có lỗi xảy ra!');
+        const isSelected = selectedIds.includes(artist.id);
+        
+        if (isSelected) {
+            // Luôn cho phép bỏ chọn
+            setSelectedIds(selectedIds.filter(id => id !== artist.id));
+        } else if (selectedIds.length < MAX_SELECTIONS) {
+            // Chỉ cho phép chọn thêm khi chưa đạt tối đa
+            setSelectedIds([...selectedIds, artist.id]);
         }
     };
 
-    // Xử lý khi chọn nghệ sĩ liên quan
-    const handleSelectRelatedArtist = (artist) => {
-        if (selectedIds.length >= 3) return;
-        setSelectedIds([...selectedIds, artist.id]);
-    };
-
-    // Xử lý khi hủy chọn nghệ sĩ liên quan
-    const handleUnselectRelated = (artistId) => {
-        const newSelected = selectedIds.filter(id => id !== artistId);
-        setSelectedIds(newSelected);
+    const handleDone = () => {
+        if (selectedIds.length > 0) {
+            router.push('screens/HomeScreen');
+        }
     };
 
     useEffect(() => {
         fetchArtists();
     }, []);
 
-    return (
-        <SafeAreaView style={styles.safeArea}>
-            {/* Fixed Header */}
-            <View style={styles.fixedHeader}>
-                <View style={styles.headerTop}>
-                    <Text style={styles.title}>Chọn 3 nghệ sĩ bạn thích</Text>
+    const renderItem = ({ item, index }) => {
+        if (item === 'load_more') {
+            return (
+                <View style={styles.artistContainer}>
                     <TouchableOpacity
-                        style={[
-                            styles.doneButton,
-                            { opacity: selectedIds.length > 0 ? 1 : 0.5 },
-                        ]}
-                        onPress={handleDone}
-                        disabled={selectedIds.length === 0}
+                        style={styles.loadMoreButton}
+                        onPress={handleLoadMore}
                     >
-                        <Text style={styles.doneText}>Xong</Text>
+                        <View style={styles.imageContainer}>
+                            <View style={styles.loadMoreContent}>
+                                <Ionicons name="add" size={32} color="#666" />
+                            </View>
+                        </View>
+                        <Text style={styles.artistName}>Xem thêm</Text>
                     </TouchableOpacity>
                 </View>
+            );
+        }
 
-                {/* Search Bar */}
+        return (
+            <View style={styles.artistContainer}>
+                <TouchableOpacity
+                    onPress={() => handleSelectArtist(item)}
+                    style={[
+                        styles.artistButton,
+                        !selectedIds.includes(item.id) && 
+                        selectedIds.length >= MAX_SELECTIONS && 
+                        styles.disabledArtist
+                    ]}
+                    disabled={!selectedIds.includes(item.id) && selectedIds.length >= MAX_SELECTIONS}
+                >
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={{ uri: item.image_url }}
+                            style={[
+                                styles.artistImage,
+                                selectedIds.includes(item.id) && styles.selectedImage  // Làm mờ ảnh khi được chọn
+                            ]}
+                        />
+                        {selectedIds.includes(item.id) && (
+                            <View style={styles.checkmark}>
+                                <Entypo name="check" size={60} color="white" />
+                            </View>
+                        )}
+                    </View>
+                    <Text style={styles.artistName} numberOfLines={1}>
+                        {item.name}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
+
+    // Tạo data array với nút "Xem thêm"
+    const getDisplayData = () => {
+        const displayedArtists = filteredArtists.slice(0, visibleItems);
+        if (visibleItems < filteredArtists.length) {
+            return [...displayedArtists, 'load_more'];
+        }
+        return displayedArtists;
+    };
+
+    return (
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.container}>
+                <Text style={styles.title}>
+                    Chọn tối đa {MAX_SELECTIONS} nghệ sĩ bạn thích.
+                </Text>
+
                 <View style={styles.searchContainer}>
-                    <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+                    <Ionicons
+                        name="search"
+                        size={20}
+                        color="#666"
+                        style={styles.searchIcon}
+                    />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Tìm nghệ sĩ..."
-                        placeholderTextColor="#666"
+                        placeholder="Tìm kiếm"
+                        placeholderTextColor="#999"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                     />
                 </View>
 
-                {/* Selected Count */}
-                <View style={styles.selectedCount}>
-                    <Text style={styles.selectedCountText}>
-                        Đã chọn {selectedIds.length}/3 nghệ sĩ
-                    </Text>
-                </View>
+                <FlatList
+                    data={getDisplayData()}
+                    numColumns={3}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.gridContainer}
+                    columnWrapperStyle={{ justifyContent: 'flex-start' }} // Thay đổi từ space-between sang flex-start
+                    keyExtractor={(item) => item === 'load_more' ? 'load_more' : item.id.toString()}
+                    renderItem={renderItem}
+                />
+
+                {selectedIds.length > 0 && (
+                    <TouchableOpacity
+                        style={styles.doneButton}
+                        onPress={handleDone}
+                    >
+                        <Text style={styles.doneButtonText}>XONG</Text>
+                    </TouchableOpacity>
+                )}
             </View>
-
-            {/* Scrollable Content */}
-            <ScrollView 
-                style={styles.scrollContainer}
-                showsVerticalScrollIndicator={false}
-            >
-                {loading && (
-                    <View style={styles.loading}>
-                        <ActivityIndicator size="large" color="#0000ff" />
-                    </View>
-                )}
-
-                {error && (
-                    <Text style={styles.error}>{error}</Text>
-                )}
-
-                {!loading && !error && (
-                    <View style={styles.content}>
-                        {showRelated ? (
-                            // Hiển thị nghệ sĩ chính và liên quan
-                            <View style={styles.selectedContainer}>
-                                {/* Nghệ sĩ chính */}
-                                <TouchableOpacity
-                                    style={styles.selectedArtistCard}
-                                    onPress={handleUnselect}
-                                >
-                                    <Image
-                                        source={{ uri: selectedArtist?.image_url }}
-                                        style={styles.selectedImage}
-                                    />
-                                    <Text style={styles.selectedName}>
-                                        {selectedArtist?.name}
-                                    </Text>
-                                </TouchableOpacity>
-
-                                {/* Danh sách nghệ sĩ liên quan */}
-                                <FlatList
-                                    data={relatedArtists}
-                                    numColumns={3}
-                                    scrollEnabled={false}
-                                    contentContainerStyle={styles.relatedContainer}
-                                    renderItem={({ item }) => (
-                                        <ArtistCard
-                                            artist={item}
-                                            isSelected={selectedIds.includes(item.id)}
-                                            onSelected={() => handleSelectRelatedArtist(item)}
-                                            onUnselected={() => handleUnselectRelated(item.id)}
-                                        />
-                                    )}
-                                    keyExtractor={(item) => item.id.toString()}
-                                />
-                            </View>
-                        ) : (
-                            // Hiển thị danh sách nghệ sĩ ban đầu
-                            <FlatList
-                                data={filteredArtists}
-                                numColumns={3}
-                                scrollEnabled={false}
-                                contentContainerStyle={styles.artistGrid}
-                                renderItem={({ item }) => (
-                                    <ArtistCard
-                                        artist={item}
-                                        isSelected={selectedIds.includes(item.id)}
-                                        onSelected={() => handleSelectArtist(item)}
-                                    />
-                                )}
-                                keyExtractor={(item) => item.id.toString()}
-                            />
-                        )}
-                    </View>
-                )}
-            </ScrollView>
         </SafeAreaView>
     );
 };
-
-// Component ArtistCard
-const ArtistCard = ({
-                        artist,
-                        isSelected,
-                        onSelected,
-                        onUnselected,
-                    }) => {
-    return (
-        <TouchableOpacity
-            style={[
-                styles.artistCard,
-                { opacity: isSelected ? 0.6 : 1 },
-            ]}
-            onPress={() => {
-                if (isSelected) {
-                    onUnselected?.();
-                } else {
-                    onSelected();
-                }
-            }}
-        >
-            <Image
-                source={{ uri: artist.image_url }}
-                style={styles.artistImage}
-            />
-            {isSelected && <View style={styles.checkMark} />}
-            <Text style={styles.artistName}>{artist.name}</Text>
-        </TouchableOpacity>
-    );
-};
-
 
 export default Optional;

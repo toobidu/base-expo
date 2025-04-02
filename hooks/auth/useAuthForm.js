@@ -66,9 +66,10 @@ export const useAuthForm = (type = 'login') => {
     const handleSubmit = async () => {
         try {
             if (!validateForm()) return;
-            
+
             setLoading(true);
-            
+
+            // TODO: Implement API call to authenticate user
             // const endpoint = type === 'login' ? '/auth/login' : '/auth/register';
             // const response = await apiInstance.post(endpoint, {
             //     email: formData.email,
@@ -76,13 +77,28 @@ export const useAuthForm = (type = 'login') => {
             //     ...(type === 'register' && { username: formData.username })
             // });
 
-            // if (response.data.success) {
-            //     await AsyncStorage.setItem('userToken', response.data.token);
-            //     router.push('/screens/HomeScreen');
-            // }
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Simulate successful login/register
+                if (type === 'login') {
+                    // For login, navigate to Optional screen
+                    router.push('screens/Optional');
+                } else {
+                    // For register, navigate to Optional screen as well
+                    router.push('screens/Optional');
+                }
+
+                // TODO: Store user token when real API is implemented
+                // if (response.data.success) {
+                //     await AsyncStorage.setItem('userToken', response.data.token);
+                // }
+
+                setLoading(false);
+            }, 1500); // Simulate network delay
+
+            return; // Early return to prevent the finally block from executing too soon
         } catch (err) {
             setError(err.response?.data?.message || 'Đã có lỗi xảy ra');
-        } finally {
             setLoading(false);
         }
     };
