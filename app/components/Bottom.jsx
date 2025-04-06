@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '@/constants/theme';
 import Entypo from '@expo/vector-icons/Entypo';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Bottom = () => {
     const router = useRouter();
@@ -12,43 +11,48 @@ const Bottom = () => {
 
     const navigationItems = [
         {
-            name: 'Home',
-            icon: <Entypo name="home" size={24} color="black" />, // Outline khi không active
-            activeIcon: <Entypo name="home" size={28} color="black" />, // Tăng size khi active
+            name: 'Trang chủ',
+            icon: 'home',
             route: '/screens/screen-bottom/HomeScreen'
         },
         {
-            name: 'Search',
-            icon: <Entypo name="magnifying-glass" size={24} color="black" />,
-            activeIcon: <Entypo name="magnifying-glass" size={28} color="black" />,
+            name: 'Tìm kiếm',
+            icon: 'magnifying-glass',
             route: '/screens/screen-bottom/SearchScreen'
         },
         {
-            name: 'Playlist',
-            icon: <Entypo name="list" size={24} color="black" />,
-            activeIcon: <Entypo name="list" size={28} color="black" />,
+            name: 'Thư viện',
+            icon: 'book',
             route: '/screens/screen-bottom/PlaylistScreen'
         }
     ];
 
+    // Xử lý chuyển trang chỉ khi màn hình hiện tại khác với màn hình muốn đến
     const handleNavigation = (route) => {
-        router.push(route);
+        if (currentPath !== route) {
+            router.push(route);
+        }
+        // Nếu đã ở màn hình được chọn, không làm gì cả
     };
 
     return (
         <View style={styles.container}>
             {navigationItems.map((item) => {
+                // Kiểm tra xem đường dẫn hiện tại có khớp với route của item hay không
                 const isActive = currentPath === item.route;
+
                 return (
                     <TouchableOpacity
                         key={item.name}
                         style={styles.tabButton}
                         onPress={() => handleNavigation(item.route)}
                         activeOpacity={0.7}
+                        // Vô hiệu hóa nút khi đang ở màn hình đó
+                        disabled={isActive}
                     >
-                        <Ionicons
-                            name={isActive ? item.activeIcon : item.icon}
-                            size={24}
+                        <Entypo
+                            name={item.icon}
+                            size={isActive ? 28 : 24}
                             color={isActive ? COLORS.primary : COLORS.text.secondary}
                         />
                         <Text
@@ -69,11 +73,12 @@ const Bottom = () => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        height: 60,
+        height: 70, // Tăng height từ 60 lên 70
         backgroundColor: COLORS.background,
         borderTopWidth: 1,
         borderTopColor: 'rgba(255, 255, 255, 0.1)',
-        paddingBottom: 8,
+        paddingBottom: 12, // Tăng paddingBottom từ 8 lên 12
+        paddingTop: 8, // Thêm paddingTop
         paddingHorizontal: 20,
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 8,
+        paddingVertical: 6, // Giảm từ 8 xuống 6
     },
     tabText: {
         fontSize: 12,

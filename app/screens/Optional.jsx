@@ -15,6 +15,7 @@ import OptionalStyle from "@/styles/OptionalStyle";
 import Entypo from '@expo/vector-icons/Entypo';
 
 // Mock data for artists
+//todo: get data from api
 const mockArtists =
     [
         {
@@ -438,7 +439,7 @@ const Optional = () => {
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.container}>
                 <Text style={styles.title}>
-                    Chọn tối đa {MAX_SELECTIONS} nghệ sĩ bạn thích.
+                    Chọn {MAX_SELECTIONS} nghệ sĩ bạn thích
                 </Text>
 
                 <View style={styles.searchContainer}>
