@@ -18,7 +18,7 @@ const Bottom = () => {
         {
             name: 'Tìm kiếm',
             icon: 'magnifying-glass',
-            route: '/screens/screen-bottom/SearchScreen'
+            route: '/screens/screen-bottom/SearchingScreen'
         },
         {
             name: 'Thư viện',
@@ -27,18 +27,18 @@ const Bottom = () => {
         }
     ];
 
-    // Xử lý chuyển trang chỉ khi màn hình hiện tại khác với màn hình muốn đến
     const handleNavigation = (route) => {
         if (currentPath !== route) {
-            router.push(route);
+            router.replace(route, {
+                immediate: true,
+                animation: 'none'
+            });
         }
-        // Nếu đã ở màn hình được chọn, không làm gì cả
     };
 
     return (
         <View style={styles.container}>
             {navigationItems.map((item) => {
-                // Kiểm tra xem đường dẫn hiện tại có khớp với route của item hay không
                 const isActive = currentPath === item.route;
 
                 return (
@@ -47,7 +47,6 @@ const Bottom = () => {
                         style={styles.tabButton}
                         onPress={() => handleNavigation(item.route)}
                         activeOpacity={0.7}
-                        // Vô hiệu hóa nút khi đang ở màn hình đó
                         disabled={isActive}
                     >
                         <Entypo
@@ -73,12 +72,12 @@ const Bottom = () => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        height: 70, // Tăng height từ 60 lên 70
+        height: 60, // Giảm từ 70 xuống 60
         backgroundColor: COLORS.background,
         borderTopWidth: 1,
         borderTopColor: 'rgba(255, 255, 255, 0.1)',
-        paddingBottom: 12, // Tăng paddingBottom từ 8 lên 12
-        paddingTop: 8, // Thêm paddingTop
+        paddingBottom: 8, // Giảm từ 12 xuống 8
+        paddingTop: 4, // Giảm từ 8 xuống 4
         paddingHorizontal: 20,
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -87,7 +86,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 6, // Giảm từ 8 xuống 6
+        paddingVertical: 4, // Giảm từ 6 xuống 4
     },
     tabText: {
         fontSize: 12,
