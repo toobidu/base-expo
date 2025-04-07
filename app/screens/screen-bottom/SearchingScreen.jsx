@@ -4,7 +4,6 @@ import {
     Text,
     TextInput,
     FlatList,
-    Image,
     TouchableOpacity,
     SafeAreaView,
     ActivityIndicator,
@@ -21,7 +20,7 @@ import Bottom from '../../components/Bottom';
 const SEARCH_HISTORY_KEY = '@search_history';
 const MAX_HISTORY_ITEMS = 10;
 
-// Mock data remains the same as before...
+// Mock data 
 const mockSearchResults = {
     songs: [
         {

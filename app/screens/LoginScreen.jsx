@@ -91,7 +91,7 @@ const LoginScreen = () => {
                                         style={styles.inputIcon}
                                     />
                                     <TextInput
-                                        ref={(ref) => (refs.inputs.password = ref)} // Gán ref cho password
+                                        ref={(ref) => (refs.inputs.password = ref)}
                                         style={styles.passwordInput}
                                         secureTextEntry={!showPassword}
                                         placeholderTextColor="#FFFFFF"
@@ -111,6 +111,12 @@ const LoginScreen = () => {
                                         />
                                     </TouchableOpacity>
                                 </View>
+                                <TouchableOpacity
+                                    style={styles.forgotPasswordContainer}
+                                    onPress={() => router.push('screens/ForgotPasswordScreen')}
+                                >
+                                    <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
+                                </TouchableOpacity>
                             </View>
 
                             {error && (

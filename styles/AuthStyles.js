@@ -61,7 +61,7 @@ const AuthStyles = StyleSheet.create({
     formContainer: {
     },
     inputContainer: {
-        marginBottom: 20,
+        marginBottom: 12, // Giảm từ 20 xuống 12
     },
     inputWrapper: {
         flexDirection: 'row',
@@ -101,7 +101,7 @@ const AuthStyles = StyleSheet.create({
     // Button styles
     buttonContainer: {
         width: '100%',
-        marginTop: 24,
+        marginTop: 16, // Giảm từ 24 xuống 16
     },
     button: {
         backgroundColor: '#1DB954',
@@ -109,7 +109,7 @@ const AuthStyles = StyleSheet.create({
         borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 24,
+        marginTop: 8, // Giảm marginTop để gần hơn với dòng chữ phía trên
     },
 
     buttonText: {
@@ -172,6 +172,16 @@ const AuthStyles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         marginLeft: 4,
+    },
+    forgotPasswordContainer: {
+        alignSelf: 'flex-end',
+        marginTop: 20,
+        marginRight: 8,
+    },
+    forgotPasswordText: {
+        color: '#22C55E', // Đổi màu giống với registerLink
+        fontSize: 14,
+        fontWeight: '600', // Thêm fontWeight giống registerLink
     },
 });
 
