@@ -1,9 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { 
+    View, 
+    Text, 
+    StyleSheet, 
+    SafeAreaView, 
+    ScrollView, 
+    Image, 
+    TouchableOpacity, 
+    Animated,
+    Platform 
+} from 'react-native';
+import { BlurView } from 'expo-blur';
 import Bottom from '../../components/Bottom';
 import { COLORS } from '@/constants/theme';
 import { Entypo } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Sidebar from '../../components/Sidebar';
 // import apiInstance from '@/api/apiInstance';
 
 // Mock data cho ứng dụng
@@ -157,6 +169,42 @@ const HomeScreen = () => {
     const [recentlyPlayed, setRecentlyPlayed] = useState(MOCK_DATA.recentlyPlayed);
     const [recommendedPlaylists, setRecommendedPlaylists] = useState(MOCK_DATA.recommendedPlaylists);
     const [featuredPlaylists, setFeaturedPlaylists] = useState(MOCK_DATA.featuredPlaylists);
+    const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+    const translateX = useRef(new Animated.Value(-1000)).current;
+    const blurOpacity = useRef(new Animated.Value(0)).current;
+
+    const toggleSidebar = () => {
+        if (isSidebarVisible) {
+            // Hide sidebar and blur
+            Animated.parallel([
+                Animated.timing(translateX, {
+                    toValue: -1000,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(blurOpacity, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: true,
+                })
+            ]).start(() => setIsSidebarVisible(false));
+        } else {
+            // Show sidebar and blur
+            setIsSidebarVisible(true);
+            Animated.parallel([
+                Animated.timing(translateX, {
+                    toValue: 0,
+                    duration: 300,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(blurOpacity, {
+                    toValue: 1,
+                    duration: 300,
+                    useNativeDriver: true,
+                })
+            ]).start();
+        }
+    };
 
     // TODO: Implement API calls using axios
     // const fetchUserData = async () => {
@@ -252,93 +300,119 @@ const HomeScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header - Đã tách ra khỏi ScrollView để cố định */}
-            <View style={styles.header}>
-                <Text style={styles.greeting}>{greeting}</Text>
-                <View style={styles.headerIcons}>
-                    {/* TODO: Sẽ hiển thị số thông báo từ API */}
-                    <TouchableOpacity style={styles.iconButton} onPress={() => router.push('/screens/header-screen/NoticeScreen')}>
-                        <Entypo name="bell" size={24} color={COLORS.text.primary} />
-                    </TouchableOpacity>
-                    {/* TODO: Sẽ mở history từ API */}
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Entypo name="clock" size={24} color={COLORS.text.primary} />
-                    </TouchableOpacity>
-                    {/* TODO: Avatar sẽ lấy từ thông tin user profile API */}
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Image
-                            source={{ uri: userData.avatarUrl }}
-                            style={styles.avatarImage}
-                        />
-                    </TouchableOpacity>
+            <View style={styles.mainContent}>
+                <View style={styles.header}>
+                    <View style={styles.headerIcons}>
+                        <TouchableOpacity style={styles.iconButton} onPress={() => router.push('/screens/header-screen/NoticeScreen')}>
+                            <Entypo name="bell" size={24} color={COLORS.text.primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconButton}>
+                            <Entypo name="clock" size={24} color={COLORS.text.primary} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconButton} onPress={toggleSidebar}>
+                            <Image
+                                source={{ uri: userData.avatarUrl }}
+                                style={styles.avatarImage}
+                            />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.greeting}>{greeting}</Text>
                 </View>
+
+                <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                    {/*todo: Phần này sẽ lấy dữ liệu từ lịch sử nghe (nếu không có thì nó sẽ không xuất hiện)*/}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Phát gần đây</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                            {recentlyPlayed.map((item) => (
+                                <TouchableOpacity
+                                    key={item.id}
+                                    style={styles.musicCard}
+                                    onPress={() => handleSongPress(item.id)}
+                                >
+                                    <Image
+                                        style={styles.albumCover}
+                                        source={{ uri: item.albumCover }}
+                                    />
+                                    <Text style={styles.songTitle} numberOfLines={1}>{item.title}</Text>
+                                    <Text style={styles.artistName} numberOfLines={1}>{item.artist}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+
+                    {/*todo: Phần này sẽ lấy dữ liệu từ cái gợi ý đã chọn 3 nghệ sĩ*/}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Có thể bạn sẽ thích</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                            {recommendedPlaylists.map((item) => (
+                                <TouchableOpacity
+                                    key={item.id}
+                                    style={styles.playlistCard}
+                                    onPress={() => handlePlaylistPress(item.id)}
+                                >
+                                    <Image
+                                        style={styles.playlistCover}
+                                        source={{ uri: item.coverImage }}
+                                    />
+                                    <Text style={styles.playlistTitle} numberOfLines={2}>{item.title}</Text>
+                                    <Text style={styles.playlistDescription} numberOfLines={2}>{item.description}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+
+                    {/*todo: Phần này sẽ gợi ý cho những bài hát đang hot*/}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>SoundCLone lựa chọn cho bạn</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                            {featuredPlaylists.map((item) => (
+                                <TouchableOpacity
+                                    key={item.id}
+                                    style={styles.playlistCard}
+                                    onPress={() => handlePlaylistPress(item.id)}
+                                >
+                                    <Image
+                                        style={styles.playlistCover}
+                                        source={{ uri: item.coverImage }}
+                                    />
+                                    <Text style={styles.playlistTitle} numberOfLines={2}>{item.title}</Text>
+                                    <Text style={styles.playlistDescription} numberOfLines={2}>{item.description}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </ScrollView>
+                <Bottom />
             </View>
 
-            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {/*todo: Phần này sẽ lấy dữ liệu từ lịch sử nghe (nếu không có thì nó sẽ không xuất hiện)*/}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Phát gần đây</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-                        {recentlyPlayed.map((item) => (
-                            <TouchableOpacity
-                                key={item.id}
-                                style={styles.musicCard}
-                                onPress={() => handleSongPress(item.id)}
-                            >
-                                <Image
-                                    style={styles.albumCover}
-                                    source={{ uri: item.albumCover }}
-                                />
-                                <Text style={styles.songTitle} numberOfLines={1}>{item.title}</Text>
-                                <Text style={styles.artistName} numberOfLines={1}>{item.artist}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
+            {/* Blur Overlay */}
+            {isSidebarVisible && (
+                <Animated.View
+                    style={[
+                        styles.blurContainer,
+                        { opacity: blurOpacity }
+                    ]}
+                >
+                    <BlurView
+                        intensity={20}
+                        style={StyleSheet.absoluteFill}
+                        tint="dark"
+                    />
+                    <TouchableOpacity
+                        style={StyleSheet.absoluteFill}
+                        onPress={toggleSidebar}
+                    />
+                </Animated.View>
+            )}
 
-                {/*todo: Phần này sẽ lấy dữ liệu từ cái gợi ý đã chọn 3 nghệ sĩ*/}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Có thể bạn sẽ thích</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-                        {recommendedPlaylists.map((item) => (
-                            <TouchableOpacity
-                                key={item.id}
-                                style={styles.playlistCard}
-                                onPress={() => handlePlaylistPress(item.id)}
-                            >
-                                <Image
-                                    style={styles.playlistCover}
-                                    source={{ uri: item.coverImage }}
-                                />
-                                <Text style={styles.playlistTitle} numberOfLines={2}>{item.title}</Text>
-                                <Text style={styles.playlistDescription} numberOfLines={2}>{item.description}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-
-                {/*todo: Phần này sẽ gợi ý cho những bài hát đang hot*/}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>SoundCLone lựa chọn cho bạn</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
-                        {featuredPlaylists.map((item) => (
-                            <TouchableOpacity
-                                key={item.id}
-                                style={styles.playlistCard}
-                                onPress={() => handlePlaylistPress(item.id)}
-                            >
-                                <Image
-                                    style={styles.playlistCover}
-                                    source={{ uri: item.coverImage }}
-                                />
-                                <Text style={styles.playlistTitle} numberOfLines={2}>{item.title}</Text>
-                                <Text style={styles.playlistDescription} numberOfLines={2}>{item.description}</Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-            </ScrollView>
-            <Bottom />
+            {/* Sidebar */}
+            <Sidebar 
+                isVisible={isSidebarVisible}
+                onClose={toggleSidebar}
+                userData={userData}
+                translateX={translateX}
+            />
         </SafeAreaView>
     );
 };
@@ -347,6 +421,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.background,
+    },
+    mainContent: {
+        flex: 1,
+    },
+    blurContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)', // Fallback for devices that don't support BlurView
+        zIndex: 999,
     },
     content: {
         flex: 1,
