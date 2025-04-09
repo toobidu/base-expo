@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native';
 import { COLORS } from '@/constants/theme';
 import { Entypo } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -12,6 +12,16 @@ const Sidebar = ({ isVisible, onClose, userData, translateX }) => {
             icon: 'user',
             title: 'Hồ sơ',
             onPress: () => router.push('/screens/ProfileScreen')
+        },
+        {
+            icon: 'bell',
+            title: 'Thông báo',
+            onPress: () => router.push('/screens/FavoriteSongsScreen')
+        },
+        {
+            icon: 'clock',
+            title: 'Lịch sử',
+            onPress: () => router.push('/screens/FavoriteSongsScreen')
         },
         {
             icon: 'cog',
@@ -38,67 +48,74 @@ const Sidebar = ({ isVisible, onClose, userData, translateX }) => {
     return (
         <Animated.View 
             style={[
-                styles.container,
+                styles.animatedContainer,
                 {
                     transform: [{ translateX }]
                 }
             ]}
         >
-            <View style={styles.header}>
-                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                    <Entypo name="chevron-left" size={24} color={COLORS.text.primary} />
-                </TouchableOpacity>
-            </View>
-
-            <View style={styles.userInfo}>
-                <Image
-                    source={{ uri: userData.avatarUrl }}
-                    style={styles.avatar}
-                />
-                <Text style={styles.userName}>{userData.name}</Text>
-                <Text style={styles.userEmail}>{userData.email}</Text>
-                {userData.premium && (
-                    <View style={styles.premiumBadge}>
-                        <Text style={styles.premiumText}>Premium</Text>
-                    </View>
-                )}
-            </View>
-
-            <View style={styles.menuContainer}>
-                {menuItems.map((item, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={styles.menuItem}
-                        onPress={item.onPress}
-                    >
-                        <Entypo name={item.icon} size={24} color={COLORS.text.primary} />
-                        <Text style={styles.menuText}>{item.title}</Text>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                        <Entypo name="chevron-right" size={24} color={COLORS.text.primary} />
                     </TouchableOpacity>
-                ))}
-            </View>
+                </View>
+
+                <View style={styles.userInfo}>
+                    <Image
+                        source={{ uri: userData.avatarUrl }}
+                        style={styles.avatar}
+                    />
+                    <Text style={styles.userName}>{userData.name}</Text>
+                    <Text style={styles.userEmail}>{userData.email}</Text>
+                    {userData.premium && (
+                        <View style={styles.premiumBadge}>
+                            <Text style={styles.premiumText}>Premium</Text>
+                        </View>
+                    )}
+                </View>
+
+                <View style={styles.menuContainer}>
+                    {menuItems.map((item, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.menuItem}
+                            onPress={item.onPress}
+                        >
+                            <Entypo name={item.icon} size={24} color={COLORS.text.primary} />
+                            <Text style={styles.menuText}>{item.title}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </SafeAreaView>
         </Animated.View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    animatedContainer: {
         position: 'absolute',
-        left: 0,
+        right: 0,
         top: 0,
         bottom: 0,
         width: '80%',
         backgroundColor: COLORS.background,
         zIndex: 1000,
         elevation: 5,
-        borderRightWidth: 1,
-        borderRightColor: 'rgba(255,255,255,0.1)',
+        borderLeftWidth: 1,
+        borderLeftColor: 'rgba(255,255,255,0.1)',
+    },
+    container: {
+        flex: 1,
     },
     header: {
         height: 60,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingHorizontal: 16,
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(255,255,255,0.1)',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     closeButton: {
         padding: 8,

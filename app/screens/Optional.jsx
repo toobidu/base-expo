@@ -365,7 +365,7 @@ const Optional = () => {
 
     const handleDone = () => {
         if (selectedIds.length > 0) {
-            router.push('screens/HomeScreen');
+            router.push('screens/screen-bottom/HomeScreen');
         }
     };
 

@@ -1,20 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    SafeAreaView, 
-    ScrollView, 
-    Image, 
-    TouchableOpacity, 
-    Animated,
-    Platform 
-} from 'react-native';
-import { BlurView } from 'expo-blur';
+import React, {useEffect, useRef, useState} from 'react';
+import {Animated, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {BlurView} from 'expo-blur';
 import Bottom from '../../components/Bottom';
-import { COLORS } from '@/constants/theme';
-import { Entypo } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import {COLORS} from '@/constants/theme';
+import {Entypo} from '@expo/vector-icons';
+import {useRouter} from 'expo-router';
 import Sidebar from '../../components/Sidebar';
 // import apiInstance from '@/api/apiInstance';
 
@@ -170,7 +160,7 @@ const HomeScreen = () => {
     const [recommendedPlaylists, setRecommendedPlaylists] = useState(MOCK_DATA.recommendedPlaylists);
     const [featuredPlaylists, setFeaturedPlaylists] = useState(MOCK_DATA.featuredPlaylists);
     const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-    const translateX = useRef(new Animated.Value(-1000)).current;
+    const translateX = useRef(new Animated.Value(1000)).current;
     const blurOpacity = useRef(new Animated.Value(0)).current;
 
     const toggleSidebar = () => {
@@ -178,7 +168,7 @@ const HomeScreen = () => {
             // Hide sidebar and blur
             Animated.parallel([
                 Animated.timing(translateX, {
-                    toValue: -1000,
+                    toValue: 1000,
                     duration: 300,
                     useNativeDriver: true,
                 }),
@@ -302,21 +292,15 @@ const HomeScreen = () => {
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContent}>
                 <View style={styles.header}>
+                    <Text style={styles.greeting}>{greeting}</Text>
                     <View style={styles.headerIcons}>
-                        <TouchableOpacity style={styles.iconButton} onPress={() => router.push('/screens/header-screen/NoticeScreen')}>
-                            <Entypo name="bell" size={24} color={COLORS.text.primary} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.iconButton}>
-                            <Entypo name="clock" size={24} color={COLORS.text.primary} />
-                        </TouchableOpacity>
                         <TouchableOpacity style={styles.iconButton} onPress={toggleSidebar}>
                             <Image
-                                source={{ uri: userData.avatarUrl }}
+                                source={{uri: userData.avatarUrl}}
                                 style={styles.avatarImage}
                             />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.greeting}>{greeting}</Text>
                 </View>
 
                 <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
@@ -332,7 +316,7 @@ const HomeScreen = () => {
                                 >
                                     <Image
                                         style={styles.albumCover}
-                                        source={{ uri: item.albumCover }}
+                                        source={{uri: item.albumCover}}
                                     />
                                     <Text style={styles.songTitle} numberOfLines={1}>{item.title}</Text>
                                     <Text style={styles.artistName} numberOfLines={1}>{item.artist}</Text>
@@ -353,7 +337,7 @@ const HomeScreen = () => {
                                 >
                                     <Image
                                         style={styles.playlistCover}
-                                        source={{ uri: item.coverImage }}
+                                        source={{uri: item.coverImage}}
                                     />
                                     <Text style={styles.playlistTitle} numberOfLines={2}>{item.title}</Text>
                                     <Text style={styles.playlistDescription} numberOfLines={2}>{item.description}</Text>
@@ -374,7 +358,7 @@ const HomeScreen = () => {
                                 >
                                     <Image
                                         style={styles.playlistCover}
-                                        source={{ uri: item.coverImage }}
+                                        source={{uri: item.coverImage}}
                                     />
                                     <Text style={styles.playlistTitle} numberOfLines={2}>{item.title}</Text>
                                     <Text style={styles.playlistDescription} numberOfLines={2}>{item.description}</Text>
@@ -383,7 +367,7 @@ const HomeScreen = () => {
                         </ScrollView>
                     </View>
                 </ScrollView>
-                <Bottom />
+                <Bottom/>
             </View>
 
             {/* Blur Overlay */}
@@ -391,7 +375,7 @@ const HomeScreen = () => {
                 <Animated.View
                     style={[
                         styles.blurContainer,
-                        { opacity: blurOpacity }
+                        {opacity: blurOpacity}
                     ]}
                 >
                     <BlurView
@@ -407,7 +391,7 @@ const HomeScreen = () => {
             )}
 
             {/* Sidebar */}
-            <Sidebar 
+            <Sidebar
                 isVisible={isSidebarVisible}
                 onClose={toggleSidebar}
                 userData={userData}
